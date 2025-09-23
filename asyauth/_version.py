@@ -1,5 +1,5 @@
 
-__version__ = "0.0.29"
+__version__ = "0.0.30"
 __banner__ = \
 """
 # asyauth-bAD %s 

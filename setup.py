@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import re
 
-VERSIONFILE="asyauth/_version.py"
+VERSIONFILE="badauth/_version.py"
 verstrline = open(VERSIONFILE, "rt").read()
 VSRE = r"^__version__ = ['\"]([^'\"]*)['\"]"
 mo = re.search(VSRE, verstrline, re.M)
@@ -13,7 +13,7 @@ else:
 
 setup(
 	# Application name:
-	name="asyauth-bAD",
+	name="badauth",
 
 	# Version number (initial):
 	version=verstr,
@@ -33,7 +33,7 @@ setup(
 	include_package_data=True,
 
 	# Details
-	url="https://github.com/CravateRouge/asyauth-bAD",
+	url="https://github.com/CravateRouge/badauth",
 
 	zip_safe = False,
 	#

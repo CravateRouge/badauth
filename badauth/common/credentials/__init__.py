@@ -1,10 +1,12 @@
 import base64
 import platform
 import copy
+import socket
 from urllib.parse import urlparse, parse_qs, unquote
 from badauth.utils.paramprocessor import str_one, int_one, bool_one
 from badauth.common.constants import asyauthSecret, asyauthProtocol, asyauthSubProtocol
 from badauth.common.subprotocols import SubProtocol, SubProtocolNative, SubProtocolSSPI
+from kerbad.common.target import KerberosTarget
 
 class UniCredential:
 	def __init__(self, secret:str = None, username:str = None, domain:str = None, stype:asyauthSecret = asyauthSecret.NONE, protocol:asyauthProtocol = None, subprotocol:SubProtocol = SubProtocolNative(), **kwargs):
@@ -203,11 +205,22 @@ class UniCredential:
 
 			target = None
 			if extra['dc'] is not None:
-				target = UniTarget(extra['dc'], 88, UniProto.CLIENT_TCP, proxies = proxies, dns=params['dns'], dc_ip=extra['dc'])
+				dc = extra['dc']
+				try:
+					# If there is no dns provided, at least dc should be an IP
+					if params['dns'] is None:
+						dc = socket.gethostbyname(extra['dc'])
+				except socket.gaierror as e:
+					raise socket.gaierror(
+						"dc must be an IP address or a resolvable hostname if no dns provided"
+					) from e
+				
+				target = KerberosTarget(dc, port=88, protocol=UniProto.CLIENT_TCP, proxies = proxies, dns=params['dns'] or dc, timeout=params['timeout'] or 10)
 
 			cross_target = None
 			if extra['dcc'] is not None:
-				cross_target = UniTarget(extra['dcc'], 88, UniProto.CLIENT_TCP, proxies = proxies, dns=params['dnsc'], dc_ip=extra['dcc'])
+				# if no dns provided dc can also be used for dns resolution to resolve until dcc
+				cross_target = KerberosTarget(extra['dcc'], port=88, protocol=UniProto.CLIENT_TCP, proxies = proxies, dns=params['dnsc'] or params['dns'] or extra['dc'], timeout=params['timeout'] or 10)
 
 			etypes = extra['etype']
 

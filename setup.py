@@ -51,7 +51,7 @@ setup(
 	install_requires=[
 		'unicrypto>=0.0.10',
 		'asn1crypto>=1.3.0',
-		'asysocks>=0.2.17',
-		'kerbad>=0.5.5',
+		'asysocks @ git+https://github.com/skelsec/asysocks.git@main',
+		'kerbad>=0.5.6',
 	],
 )

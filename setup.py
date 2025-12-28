@@ -52,6 +52,6 @@ setup(
 		'unicrypto>=0.0.12',
 		'asn1crypto>=1.3.0',
 		'asysocks>=0.2.18',
-		'kerbad>=0.5.7',
+		'kerbad>=0.5.8',
 	],
 )

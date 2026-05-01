@@ -384,6 +384,11 @@ class NTLMClientNative:
 					logger.debug('NTLMv1 Guest authentication')
 					lmresp = LMResponse()
 					self.set_version(False)
+					# set_version(False) above only mutates self.credential.flags;
+					# the local `flags` still has NEGOTIATE_VERSION set, which
+					# would make NTLMAuthenticate.construct raise because no
+					# version=... argument is supplied for the anonymous path.
+					flags &= ~NegotiateFlags.NEGOTIATE_VERSION
 					lmresp.Response = b'\x00'
 					self.ntlmAuthenticate = NTLMAuthenticate.construct(
 						flags,
@@ -434,6 +439,11 @@ class NTLMClientNative:
 					lmresp = LMResponse()
 					lmresp.Response = b'\x00'
 					self.set_version(False)
+					# set_version(False) above only mutates self.credential.flags;
+					# the local `flags` still has NEGOTIATE_VERSION set, which
+					# would make NTLMAuthenticate.construct raise because no
+					# version=... argument is supplied for the anonymous path.
+					flags &= ~NegotiateFlags.NEGOTIATE_VERSION
 					self.setup_crypto()
 					self.ntlmAuthenticate = NTLMAuthenticate.construct(
 						flags,
